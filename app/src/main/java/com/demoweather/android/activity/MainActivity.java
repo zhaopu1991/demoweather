@@ -1,7 +1,9 @@
-package com.demoweather.android;
+package com.demoweather.android.activity;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+
+import com.demoweather.android.R;
 
 public class MainActivity extends AppCompatActivity {
 
