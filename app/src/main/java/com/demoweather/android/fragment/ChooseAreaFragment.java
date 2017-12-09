@@ -1,6 +1,7 @@
 package com.demoweather.android.fragment;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -15,9 +16,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.demoweather.android.R;
+import com.demoweather.android.activity.WeatherActivity;
 import com.demoweather.android.db.City;
 import com.demoweather.android.db.County;
 import com.demoweather.android.db.Province;
+import com.demoweather.android.gson.Weather;
 import com.demoweather.android.utils.HttpUtil;
 import com.demoweather.android.utils.Utility;
 
@@ -81,6 +84,12 @@ public class ChooseAreaFragment extends Fragment {
                 }else if(currentLevel == LEVL_CITY){
                     selectedCity = cityList.get(i);
                     queryCounties();
+                }else if(currentLevel == LEVEL_COUNTY){
+                    String weaterId = countyList.get(i).getWeatherId();
+                    Intent intent = new Intent(getActivity(), WeatherActivity.class);
+                    intent.putExtra("weather_id",weaterId);
+                    startActivity(intent);
+                    getActivity().finish();
                 }
             }
         });
