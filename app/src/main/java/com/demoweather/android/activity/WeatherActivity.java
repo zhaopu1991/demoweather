@@ -6,11 +6,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.demoweather.android.R;
 import com.demoweather.android.gson.Forecast;
 import com.demoweather.android.gson.Weather;
@@ -36,6 +38,7 @@ public class WeatherActivity extends AppCompatActivity {
     private TextView comfortText;
     private TextView carWashText;
     private TextView sportText;
+    private ImageView bingImgPic;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +56,7 @@ public class WeatherActivity extends AppCompatActivity {
         comfortText = (TextView) findViewById(R.id.comfort_text);
         carWashText = (TextView) findViewById(R.id.car_wash_text);
         sportText = (TextView) findViewById(R.id.sport_text);
+        bingImgPic = (ImageView) findViewById(R.id.bing_img_pic);
 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         String weatherString = preferences.getString("weather",null);
@@ -67,6 +71,40 @@ public class WeatherActivity extends AppCompatActivity {
             requestWeather(weatherId);
         }
 
+        String bingPic = preferences.getString("bing_pic",null);
+        if(bingPic != null){
+            Glide.with(WeatherActivity.this).load(bingPic).into(bingImgPic);
+        }else {
+            loadBingPic();
+        }
+    }
+
+    /**
+     * 下载背景图片
+     */
+    private void loadBingPic() {
+        String picUri = "http://guolin.tech/api/bing_pic";
+
+        HttpUtil.sendOkHttpResquest(picUri, new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                final String picResponse = response.body().string();
+                SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(WeatherActivity.this).edit();
+                editor.putString("bing_pic",picResponse);
+                editor.apply();
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Glide.with(WeatherActivity.this).load(picResponse).into(bingImgPic);
+                    }
+                });
+            }
+        });
     }
 
     /**
