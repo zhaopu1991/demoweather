@@ -1,5 +1,6 @@
 package com.demoweather.android.activity;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Build;
@@ -22,6 +23,7 @@ import com.bumptech.glide.Glide;
 import com.demoweather.android.R;
 import com.demoweather.android.gson.Forecast;
 import com.demoweather.android.gson.Weather;
+import com.demoweather.android.service.AutoUpdateService;
 import com.demoweather.android.utils.HttpUtil;
 import com.demoweather.android.utils.Utility;
 
@@ -188,6 +190,10 @@ public class WeatherActivity extends AppCompatActivity {
      * @param weather
      */
     private void showWeatherInfo(Weather weather) {
+        if(weather == null ){
+            Toast.makeText(WeatherActivity.this,"获取天气信息失败",Toast.LENGTH_SHORT).show();
+            return;
+        }
         String cityName = weather.basic.cityName;
         String updateTime = weather.basic.update.updateTime.split(" ")[1];
         String degree = weather.now.temperature  + "℃";
@@ -221,5 +227,7 @@ public class WeatherActivity extends AppCompatActivity {
         carWashText.setText(carWash);
         sportText.setText(sport);
         weatherLayout.setVisibility(View.VISIBLE);
+        Intent intent = new Intent(this, AutoUpdateService.class);
+        startService(intent);
     }
 }
